@@ -9,15 +9,23 @@ const userShema = new Schema({
     type: String,
     required: true,
   },
-  profilePic: {
-    type: String,
-  },
+
+  Posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "chatPost",
+    },
+  ],
   Message: [
     {
       type: Schema.Types.ObjectId,
       ref: "chatMessage",
     },
   ],
+
+  profilePic: {
+    type: String,
+  },
 
   createdAt: {
     type: Date,
