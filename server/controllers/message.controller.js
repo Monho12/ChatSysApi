@@ -1,4 +1,5 @@
 const { Message } = require("../models/message.model");
+const { User } = require("../models/user.model");
 
 const getMsg = async (req, res) => {
   try {
@@ -9,7 +10,7 @@ const getMsg = async (req, res) => {
   }
 };
 
-const getMsgs = async (req, res) => {
+const getMsgs = async (_req, res) => {
   try {
     const result = await Message.find().populate("creator");
     res.send(result);
@@ -19,9 +20,12 @@ const getMsgs = async (req, res) => {
 };
 
 const createMsg = async (req, res) => {
-  const body = req.body;
+  const { creator, mainText } = req.body;
   try {
-    const result = await new Message(body).save();
+    const result = await new Message({ mainText, creator }).save();
+    const user = await User.findById(creator);
+    user.Message.push(result._id);
+    await user.save();
     res.send(result);
   } catch (error) {
     res.send(error);

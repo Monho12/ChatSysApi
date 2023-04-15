@@ -28,36 +28,4 @@ const deleteUser = async (req, res) => {
   } catch (error) {}
 };
 
-const addUserMsg = async (req, res) => {
-  const { userId, postId } = req.body;
-  try {
-    const user = await User.findById(userId).populate("Message");
-    user.Message.push(postId);
-    await user.save();
-    res.send(user);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const Verify = async (req, res) => {
-  if (req.headers.authorization) {
-    try {
-      await jwt.verify(
-        req.headers.authorization,
-        process.env.JWT_SECRET,
-        (error, item) => {
-          if (!error) {
-            res.send(item);
-          }
-        }
-      );
-    } catch (error) {
-      res.status(401);
-    }
-  } else {
-    res.status(404).send("Authentication required");
-  }
-};
-
-module.exports = { getUsers, getUser, Verify, deleteUser, addUserMsg };
+module.exports = { getUsers, getUser, deleteUser };

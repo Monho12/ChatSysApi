@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { User } = require("../models/user.model");
 require("dotenv").config();
 
-const signupUser = async (req, res) => {
+exports.signupUser = async (req, res) => {
   const { password, passwordConfirm, username } = req.body;
   const exist = await User.findOne({ username });
   if (!exist) {
@@ -28,7 +28,7 @@ const signupUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
 
@@ -38,8 +38,9 @@ const loginUser = async (req, res) => {
       const isEqaul = await bcrypt.compare(password, user.password);
       if (isEqaul) {
         const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-          expiresIn: "30min",
+          expiresIn: "24h",
         });
+        console.log("hi");
         res.send(token);
       } else {
         res.status(401).send("username or password wrong");
@@ -52,4 +53,24 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { loginUser, signupUser };
+exports.Verify = async (req, res) => {
+  if (req.headers.authorization) {
+    try {
+      await jwt.verify(
+        req.headers.authorization,
+        process.env.JWT_SECRET,
+        async (error, item) => {
+          if (!error) {
+            const user = await User.findById(item.user._id).populate("Message");
+            console.log(user);
+            res.send(user);
+          }
+        }
+      );
+    } catch (error) {
+      res.status(401);
+    }
+  } else {
+    res.status(404).send("Authentication required");
+  }
+};
