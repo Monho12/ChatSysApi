@@ -15,7 +15,10 @@ const getUser = async (req, res) => {
   try {
     const result = await User.findById(req.params.id)
       .populate("Message")
-      .populate("Posts");
+      .populate({
+        path: "Posts",
+        populate: { path: "creatorId" },
+      });
     res.send(result);
   } catch (err) {
     res.send(err);
