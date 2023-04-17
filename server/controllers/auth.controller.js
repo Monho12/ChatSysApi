@@ -62,7 +62,10 @@ exports.Verify = async (req, res) => {
           if (!error) {
             const user = await User.findById(item.user._id)
               .populate("Message")
-              .populate("Posts");
+              .populate({
+                path: "Posts",
+                populate: { path: "creatorId" },
+              });
             console.log(user);
             res.send(user);
           }
