@@ -4,6 +4,7 @@ const connect = require("./config/db");
 const { userRoutes } = require("./routes/user.routes");
 const { msgRoutes } = require("./routes/msg.routes");
 const { postRoutes } = require("./routes/post.routes");
+const { commentRoutes } = require("./routes/comment.routes");
 require("dotenv").config();
 
 const app = express();
@@ -17,6 +18,7 @@ connect();
 app.use(userRoutes);
 app.use(msgRoutes);
 app.use(postRoutes);
+app.use(commentRoutes);
 
 const port = process.env.PORT;
 
